@@ -1,8 +1,28 @@
 #!/bin/sh
 
-branch="master"
-commits=$(git rev-list $branch | tac)
+gitmap()
+{
+  local cmd=${@}
+  local branch="master"
+  local commits=$(git rev-list $branch | tac)
 
-for commit in $commits; do
-  git log --format=%B -n 1 $commit | fold | xargs
-done
+  for commit in $commits; do
+    git checkout $commit &> /dev/null
+    eval $cmd
+  done
+
+  git checkout $branch &> /dev/null
+}
+
+help()
+{
+  echo "Usage: git-map \"command to run\""
+  echo "Example: git-map \"git ls-files | wc -l | xargs\""
+}
+
+if { [ -z "$1" ] && [ -t 0 ] ; } || [ "$1" == '-h' ] || [ "$1" == '--help' ]; then
+  help
+  exit 0
+fi
+
+gitmap ${@:-`cat`}
