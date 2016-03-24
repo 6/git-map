@@ -46,6 +46,11 @@ if [ "$2" == '-n' ] && [[ $3 ]]; then
   n=$3
 fi
 
+if [[ `git status --porcelain` ]]; then
+  echo "You must commit or stash all uncommitted changes!"
+  exit 1
+fi
+
 if { [ -z "$cmd" ] && [ -t 0 ] ; } || [ "$cmd" == '-h' ] || [ "$cmd" == '--help' ]; then
   help
   exit 0
