@@ -5,7 +5,8 @@ gitmap()
   local cmd=$1
   local n=$2
   local branch="master"
-  local commits=$(git rev-list $branch | tac)
+  # Get list of commit hashes (one per line) in chronological order
+  local commits=$(git rev-list $branch | sed '1!G;h;$!d')
   local commits_count=$(echo "$commits" | wc -l | xargs)
   local every=1
   if [ -n $n ] && [ $commits_count -gt $n ]; then
