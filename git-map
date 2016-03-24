@@ -4,5 +4,5 @@ branch="master"
 commits=$(git rev-list $branch | tac)
 
 for commit in $commits; do
-  echo "COMMIT $commit"
+  git log --format=%B -n 1 $commit | fold | xargs
 done
