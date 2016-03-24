@@ -1,0 +1,8 @@
+#!/bin/sh
+
+branch="master"
+commits=$(git rev-list $branch | tac)
+
+for commit in $commits; do
+  echo "COMMIT $commit"
+done
