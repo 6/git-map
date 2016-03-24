@@ -34,12 +34,6 @@ gitmap()
   git checkout $branch &> /dev/null
 }
 
-help()
-{
-  echo "Usage: git-map \"command to run\""
-  echo "Example: git-map \"git ls-files | wc -l | xargs\""
-}
-
 cmd="$1"
 n=
 if [ "$2" == '-n' ] && [[ $3 ]]; then
@@ -52,7 +46,8 @@ if [[ `git status --porcelain` ]]; then
 fi
 
 if { [ -z "$cmd" ] && [ -t 0 ] ; } || [ "$cmd" == '-h' ] || [ "$cmd" == '--help' ]; then
-  help
+  echo "Usage: git-map \"command to run\""
+  echo "Example: git-map \"git ls-files | wc -l | xargs\""
   exit 0
 fi
 
