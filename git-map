@@ -3,21 +3,32 @@
 gitmap()
 {
   local cmd=$1
-  local n=$2
+  local n=
+  if [[ $2 ]]; then
+    local n=$(expr $2 - 1)
+  fi
   local branch="master"
+
   # Get list of commit hashes (one per line) in chronological order
   local commits=$(git rev-list $branch | sed '1!G;h;$!d')
+
+  # Calculate how often we need to sample commits, based on `-n` flag
   local commits_count=$(echo "$commits" | wc -l | xargs)
   local every=1
-  if [ -n $n ] && [ $commits_count -gt $n ]; then
+  if [[ $n ]] && [ $commits_count -gt $n ]; then
     every=$(bc <<< "scale=0;$commits_count/$n")
   fi
 
-  sampled_commits=$(echo "$commits" | awk "!(NR%$every)")
+  # Ensure that the first commit always gets run
+  local i=$(expr $every - 1)
 
-  for commit in $sampled_commits; do
-    git checkout $commit &> /dev/null
-    eval $cmd
+  for commit in $commits; do
+    ((i++))
+    if [ $i -eq $every ]; then
+      git checkout $commit &> /dev/null
+      eval $cmd
+      i=0
+    fi
   done
 
   git checkout $branch &> /dev/null
@@ -31,7 +42,7 @@ help()
 
 cmd="$1"
 n=
-if [ "$2" == '-n' ] && [ -n $3 ]; then
+if [ "$2" == '-n' ] && [[ $3 ]]; then
   n=$3
 fi
 
