@@ -7,19 +7,19 @@ run an arbitrary command against all commits, or *n* evenly-spaced commits acros
 #### count number of files for every commit:
 
 ```
-git-map "git ls-files | wc -l | xargs"
+git-map "git ls-files | wc -l"
 ```
 
 #### count lines of code for 10 evenly-spaced commits:
 
 ```
-git-map "grep '' -IR . --exclude-dir={.git,log,vendor} | wc -l | xargs" -n 10
+git-map "grep '' -IR . --exclude-dir={.git,log} | wc -l " -n 10
 ```
 
 #### boot up webserver and take a screenshot for 5 evenly-spaced commits:
 
 ```
-git-map "~/screenshot.sh" -n 5
+git-map ~/screenshot.sh -n 5
 ```
 
 ```bash
