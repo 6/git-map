@@ -1,17 +1,17 @@
 # git-map
 
-run a command against all commits or every n commits.
+run an arbitrary command against all commits, or *n* evenly-spaced commits across time.
 
 ### examples
 
-Count total lines of code for every commit:
+Count number of files for every commit:
 
 ```
-TODO
+git-map "git ls-files | wc -l | xargs"
 ```
 
-Boot up and take a screenshot of your rails app every 100 commits:
+Count lines of code for 10 evenly-spaced commits across time (excluding a few directories):
 
 ```
-TODO
+git-map "grep '' -IR . --exclude-dir={.git,log,vendor} | wc -l | xargs" -n 10
 ```
