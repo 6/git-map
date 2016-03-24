@@ -2,11 +2,19 @@
 
 gitmap()
 {
-  local cmd=${@}
+  local cmd=$1
+  local n=$2
   local branch="master"
   local commits=$(git rev-list $branch | tac)
+  local commits_count=$(echo "$commits" | wc -l | xargs)
+  local every=1
+  if [ -n $n ] && [ $commits_count -gt $n ]; then
+    every=$(bc <<< "scale=0;$commits_count/$n")
+  fi
 
-  for commit in $commits; do
+  sampled_commits=$(echo "$commits" | awk "!(NR%$every)")
+
+  for commit in $sampled_commits; do
     git checkout $commit &> /dev/null
     eval $cmd
   done
@@ -20,9 +28,15 @@ help()
   echo "Example: git-map \"git ls-files | wc -l | xargs\""
 }
 
-if { [ -z "$1" ] && [ -t 0 ] ; } || [ "$1" == '-h' ] || [ "$1" == '--help' ]; then
+cmd="$1"
+n=
+if [ "$2" == '-n' ] && [ -n $3 ]; then
+  n=$3
+fi
+
+if { [ -z "$cmd" ] && [ -t 0 ] ; } || [ "$cmd" == '-h' ] || [ "$cmd" == '--help' ]; then
   help
   exit 0
 fi
 
-gitmap ${@:-`cat`}
+gitmap "$cmd" $n
